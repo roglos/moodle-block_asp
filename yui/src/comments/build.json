@@ -1,0 +1,10 @@
+{
+    "name": "moodle-block_asp-comments",
+    "builds": {
+        "moodle-block_asp-comments": {
+            "jsfiles": [
+                "comments.js"
+            ]
+        }
+    }
+}

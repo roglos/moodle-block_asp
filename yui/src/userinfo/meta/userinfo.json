@@ -1,0 +1,10 @@
+{
+    "moodle-block_asp-userinfo": {
+        "requires": [
+            "base",
+            "event",
+            "node",
+            "io"
+        ]
+    }
+}

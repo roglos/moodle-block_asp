@@ -1,0 +1,10 @@
+{
+    "name": "moodle-block_asp-userinfo",
+    "builds": {
+        "moodle-block_asp-userinfo": {
+            "jsfiles": [
+                "userinfo.js"
+            ]
+        }
+    }
+}

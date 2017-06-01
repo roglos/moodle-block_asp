@@ -1,0 +1,10 @@
+{
+    "name": "moodle-block_asp-todolist",
+    "builds": {
+        "moodle-block_asp-todolist": {
+            "jsfiles": [
+                "todolist.js"
+            ]
+        }
+    }
+}
