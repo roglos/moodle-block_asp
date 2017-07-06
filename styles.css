@@ -38,9 +38,13 @@ body.ie7 .moodle-dialogue-base .moodle-dialogue-hd .closebutton {
 }
 
 /* Richards additions */
-.block-asp-panel textarea#wkf-comment-editor {
+.block_asp textarea#wkf-comment-editor {
     display:none;
 }
-.block-asp-panel div.wkf-submit input.submitbutton {
+.block_asp div.wkf-submit input.submitbutton {
     display:none;
+}
+
+.block_asp .assesslist .assess {
+    border-bottom: 2px solid #5e5e5e;
 }

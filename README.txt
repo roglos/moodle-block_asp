@@ -1,4 +1,4 @@
-WORKFLOW BLOCK
+ASP BLOCK
 
 This block was created for the Open Unversity (https://www.open.ac.uk/) by
 LUNS (http://www.luns.net.uk/services/virtual-learning-environments/vle-services/).

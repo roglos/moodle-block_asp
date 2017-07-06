@@ -115,7 +115,7 @@ class block_asp_step_state {
     public function load_active_state($contextid) {
         global $DB;
         $state = $DB->get_record('block_asp_step_states', array(
-                'contextid' => $contextid, 'state' => BLOCK_WORKFLOW_STATE_ACTIVE));
+                'contextid' => $contextid, 'state' => BLOCK_ASP_STATE_ACTIVE));
         if (!$state) {
             return false;
         }
@@ -234,8 +234,8 @@ class block_asp_step_state {
 
         // Unassign any role assignments created for this asp.
         switch ($this->state) {
-            case BLOCK_WORKFLOW_STATE_ABORTED:
-            case BLOCK_WORKFLOW_STATE_COMPLETED:
+            case BLOCK_ASP_STATE_ABORTED:
+            case BLOCK_ASP_STATE_COMPLETED:
                 role_unassign_all(array('component' => 'block_asp', 'itemid' => $this->id));
                 break;
             default:
@@ -244,10 +244,10 @@ class block_asp_step_state {
 
         // Request that any required scripts be processed.
         switch ($state->state) {
-            case BLOCK_WORKFLOW_STATE_ACTIVE:
+            case BLOCK_ASP_STATE_ACTIVE:
                 $this->step()->process_script($this, $this->step()->onactivescript);
                 break;
-            case BLOCK_WORKFLOW_STATE_COMPLETED:
+            case BLOCK_ASP_STATE_COMPLETED:
                 $this->step()->process_script($this, $this->step()->oncompletescript);
                 break;
             default:
@@ -279,7 +279,7 @@ class block_asp_step_state {
         $this->update_comment($newcomment, $newcommentformat);
 
         // Change the status.
-        $this->change_status(BLOCK_WORKFLOW_STATE_COMPLETED);
+        $this->change_status(BLOCK_ASP_STATE_COMPLETED);
 
         // Move to the next step for this asp.
         if ($nextstep = $this->step()->get_next_step()) {
@@ -293,7 +293,7 @@ class block_asp_step_state {
                 $newstate = new stdClass;
                 $newstate->stepid           = $nextstep->id;
                 $newstate->contextid        = $this->contextid;
-                $newstate->state            = BLOCK_WORKFLOW_STATE_ACTIVE;
+                $newstate->state            = BLOCK_ASP_STATE_ACTIVE;
                 $newstate->timemodified     = time();
                 $newstate->comment          = '';
                 $newstate->commentformat    = 1;
@@ -303,7 +303,7 @@ class block_asp_step_state {
 
             $nextstate->previouscomment = $this->comment; // Hack alert!
             $nextstate->previouscommentformat = $this->commentformat;
-            $nextstate->change_status(BLOCK_WORKFLOW_STATE_ACTIVE);
+            $nextstate->change_status(BLOCK_ASP_STATE_ACTIVE);
         }
 
         $transaction->allow_commit();
@@ -339,7 +339,7 @@ class block_asp_step_state {
 
         // Change the status of the current step, if there is one.
         if ($state->id) {
-            $state->change_status(BLOCK_WORKFLOW_STATE_ABORTED);
+            $state->change_status(BLOCK_ASP_STATE_ABORTED);
         }
 
         // If the newstepid wasn't specified, we're just aborting the current step.
@@ -365,7 +365,7 @@ class block_asp_step_state {
             $newstate = new stdClass;
             $newstate->stepid           = $newstepid;
             $newstate->contextid        = $state->contextid;
-            $newstate->state            = BLOCK_WORKFLOW_STATE_ACTIVE;
+            $newstate->state            = BLOCK_ASP_STATE_ACTIVE;
             $newstate->timemodified     = time();
             $newstate->comment          = '';
             $newstate->commentformat    = 1;
@@ -379,7 +379,7 @@ class block_asp_step_state {
         $nextstate->previouscomment =
                 get_string('jumptostepcommentaddition', 'block_asp', $a); // Hack alert!
         $nextstate->previouscommentformat = $state->commentformat;
-        $nextstate->change_status(BLOCK_WORKFLOW_STATE_ACTIVE);
+        $nextstate->change_status(BLOCK_ASP_STATE_ACTIVE);
 
         $transaction->allow_commit();
 

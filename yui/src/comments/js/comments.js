@@ -4,7 +4,7 @@ var COMMENTSNAME = 'blocks_asp_comments',
     EDITORID = 'editorid',
     EDITORNAME = 'editorname',
     CSS = {
-        BLOCKWORKFLOW:  'block_asp',
+        BLOCKASP:  'block_asp',
         BLOCKCOMMENTS:  'block_asp_comments',
         BLOCKCOMMBTN:   'block_asp_editcommentbutton',
         BLOCKFINISHBTN: 'block_asp_finishstepbutton',
@@ -145,7 +145,7 @@ Y.extend(COMMENTS, Y.Base, {
             comment = Y.one(document.getElementById(this.get(EDITORID))).get('value');
         }
 
-        var commentsblock = Y.one('.' + CSS.BLOCKWORKFLOW + ' .' + CSS.BLOCKCOMMENTS);
+        var commentsblock = Y.one('.' + CSS.BLOCKASP + ' .' + CSS.BLOCKCOMMENTS);
         // Build the data for submission
         var data = {
             sesskey: M.cfg.sesskey,
@@ -190,7 +190,7 @@ Y.extend(COMMENTS, Y.Base, {
             comment = Y.one(document.getElementById(this.get(EDITORID))).get('value');
         }
 
-        var aspblock = Y.one('.' + CSS.BLOCKWORKFLOW + ' .' + CSS.CONTENT);
+        var aspblock = Y.one('.' + CSS.BLOCKASP + ' .' + CSS.CONTENT);
         // Build the data for submission
         var data = {
             sesskey: M.cfg.sesskey,

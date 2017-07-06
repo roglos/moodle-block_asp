@@ -109,7 +109,7 @@ class block_asp_todo {
      * Function to create a new todo item
      *
      * @param   stdClass $todo containing the stepid, and task. Any
-     *          obsolete value is ignored and set to BLOCK_WORKFLOW_ENABLED
+     *          obsolete value is ignored and set to BLOCK_ASP_ENABLED
      * @return  The newly created block_asp_todo object
      * @throws  block_asp_invalid_todo_exception if no task was specified
      * @throws  block_asp_invalid_step_exception if no stepid was specified or the todo specified was invalid
@@ -137,7 +137,7 @@ class block_asp_todo {
         }
 
         // Set the obsolete value.
-        $todo->obsolete = BLOCK_WORKFLOW_ENABLED;
+        $todo->obsolete = BLOCK_ASP_ENABLED;
 
         // Check that each of the submitted fields is a valid field.
         $expectedsettings = $this->expected_settings();
@@ -280,10 +280,10 @@ class block_asp_todo {
         $update->id = $todoid;
 
         // Switch the obsolete state of the todo.
-        if ($this->obsolete == BLOCK_WORKFLOW_ENABLED) {
-            $update->obsolete = BLOCK_WORKFLOW_OBSOLETE;
+        if ($this->obsolete == BLOCK_ASP_ENABLED) {
+            $update->obsolete = BLOCK_ASP_OBSOLETE;
         } else {
-            $update->obsolete = BLOCK_WORKFLOW_ENABLED;
+            $update->obsolete = BLOCK_ASP_ENABLED;
         }
 
         // Update the record.

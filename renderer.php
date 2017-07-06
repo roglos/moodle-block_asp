@@ -42,12 +42,29 @@ class block_asp_renderer extends plugin_renderer_base {
      * @return  string          The rendered content
      */
     public function block_display(block_asp_step_state $state, $ajax = false) {
-        global $USER;
+        global $USER, $DB, $COURSE;
 
         $canmakechanges = block_asp_can_make_changes($state);
 
         $output = '';
+        $sourcetable = 'usr_data_assessments';
+        $course = $DB->get_record('course', array('id' => $COURSE->id));
+        $assessments = array();
+        if ($course->idnumber) {
+            $sql = 'SELECT * FROM ' . $sourcetable . ' WHERE mav_idnumber LIKE "%' . $course->idnumber . '%"';
+            $assessments = $DB->get_records_sql($sql);
+        }
 
+        $output .= '<div class="assesslist">';
+        foreach ($assessments as $a) {
+            $output .= '<div class="assess">';
+            $output .= '<h5>'.$a->assessment_name.'</h5>';
+            $output .= '<p>Number: '.$a->assessment_number.'         : Weighting:'.$a->assessment_weight.'%<br>';
+            $output .= 'Type: '.$a->assessment_type.'</p>';
+            $output .= '<h6>Assessment Link Code: '.$a->assessment_idcode.'</h6>';
+            $output .= '</div>';
+        }
+        $output .='</div>';
         // Create the title.
         $output .= html_writer::tag('h3', get_string('activetasktitle', 'block_asp'));
 
@@ -102,7 +119,7 @@ class block_asp_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('h3', get_string('comments', 'block_asp'));
         $commentsblock = html_writer::start_tag('div', array('class' => 'block_asp_comments'));
         $commenttext = shorten_text(format_text($state->comment, $state->commentformat,
-                array('context' => $state->context())), BLOCK_WORKFLOW_MAX_COMMENT_LENGTH);
+                array('context' => $state->context())), BLOCK_ASP_MAX_COMMENT_LENGTH);
         if ($commenttext) {
             $commentsblock .= $commenttext;
         } else {
@@ -409,7 +426,7 @@ class block_asp_renderer extends plugin_renderer_base {
 
         // Disable/Enable asp.
         $cell = new html_table_cell();
-        if ($asp->obsolete == BLOCK_WORKFLOW_ENABLED) {
+        if ($asp->obsolete == BLOCK_ASP_ENABLED) {
             $url = new moodle_url('/blocks/asp/toggleaspobsolete.php',
                     array('sesskey' => sesskey(), 'aspid' => $asp->id));
             $actions[] = html_writer::link($url, html_writer::empty_tag('img', array(
@@ -793,7 +810,7 @@ class block_asp_renderer extends plugin_renderer_base {
         // Status information.
         $row = new html_table_row(array(get_string('status', 'block_asp')));
         $cell = new html_table_cell();
-        if ($asp->obsolete == BLOCK_WORKFLOW_OBSOLETE) {
+        if ($asp->obsolete == BLOCK_ASP_OBSOLETE) {
             $cell->text = get_string('obsoleteasp', 'block_asp');
         } else {
             $cell->text = get_string('enabledasp', 'block_asp');
@@ -961,7 +978,7 @@ class block_asp_renderer extends plugin_renderer_base {
 
         // Obsolete task.
         $url = new moodle_url('/blocks/asp/toggletaskobsolete.php', array('sesskey' => sesskey(), 'taskid' => $task->id));
-        if ($task->obsolete == BLOCK_WORKFLOW_ENABLED) {
+        if ($task->obsolete == BLOCK_ASP_ENABLED) {
             $actions[] = html_writer::link($url, html_writer::empty_tag('img', array('src'   => $this->output->pix_url('t/hide'),
                                                                             'class' => 'iconsmall',
                                                                             'title' => get_string('hidetask', 'block_asp'),
@@ -1178,13 +1195,13 @@ class block_asp_renderer extends plugin_renderer_base {
         $classes = array('step');
 
         // Add some CSS classes to help colour-code the states.
-        if ($stepstate->state == BLOCK_WORKFLOW_STATE_ACTIVE) {
+        if ($stepstate->state == BLOCK_ASP_STATE_ACTIVE) {
             $classes[] = 'active';
             $state = get_string('state_active', 'block_asp', sprintf('%d', $stepstate->complete));
-        } else if ($stepstate->state == BLOCK_WORKFLOW_STATE_COMPLETED) {
+        } else if ($stepstate->state == BLOCK_ASP_STATE_COMPLETED) {
             $classes[] = 'completed';
             $state = get_string('state_completed', 'block_asp');
-        } else if ($stepstate->state == BLOCK_WORKFLOW_STATE_ABORTED) {
+        } else if ($stepstate->state == BLOCK_ASP_STATE_ABORTED) {
             $classes[] = 'aborted';
             $state = get_string('state_aborted', 'block_asp', sprintf('%d', $stepstate->complete));
         } else {
@@ -1253,7 +1270,7 @@ class block_asp_renderer extends plugin_renderer_base {
 
         // Add finish step/jump to step buttons.
         $cell = new html_table_cell();
-        if ($stepstate->state == BLOCK_WORKFLOW_STATE_ACTIVE) {
+        if ($stepstate->state == BLOCK_ASP_STATE_ACTIVE) {
             $state = new block_asp_step_state();
             $state->id               = $stepstate->stateid;
             $state->stepid           = $stepstate->id;

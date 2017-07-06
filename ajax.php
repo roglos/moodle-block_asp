@@ -64,7 +64,7 @@ switch ($action) {
         $text = required_param('text', PARAM_CLEANHTML);
         $format = required_param('format', PARAM_INT);
         $state->update_comment($text, $format);
-        $outcome->response->blockcomments = shorten_text($text, BLOCK_WORKFLOW_MAX_COMMENT_LENGTH);
+        $outcome->response->blockcomments = shorten_text($text, BLOCK_ASP_MAX_COMMENT_LENGTH);
         break;
     case 'finishstep':
         $text = required_param('text', PARAM_CLEANHTML);

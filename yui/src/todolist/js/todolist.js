@@ -2,7 +2,7 @@ var TODOLISTNAME = 'blocks_asp_todolist',
     AJAXURL = '/blocks/asp/ajax.php',
     STATEID = 'stateid',
     CSS = {
-        BLOCKWORKFLOW : 'block_asp',
+        BLOCKASP : 'block_asp',
         BLOCKTODOLIST : 'block_asp_todolist',
         BLOCKTODOTASK : 'block-asp-todotask',
         BLOCKTODOID : 'block-asp-todoid'

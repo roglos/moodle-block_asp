@@ -42,22 +42,22 @@ require_once($CFG->dirroot . '/blocks/asp/classes/command_setactivitylinkedsetti
 
 
 /** @var string An active state for a step_state. */
-define('BLOCK_WORKFLOW_STATE_ACTIVE',       'active');
+define('BLOCK_ASP_STATE_ACTIVE',       'active');
 
 /** @var string A completed state for a step_state. */
-define('BLOCK_WORKFLOW_STATE_COMPLETED',    'completed');
+define('BLOCK_ASP_STATE_COMPLETED',    'completed');
 
 /** @var string An aborted state for a step_state. */
-define('BLOCK_WORKFLOW_STATE_ABORTED',      'aborted');
+define('BLOCK_ASP_STATE_ABORTED',      'aborted');
 
 /** @var int The enabled state for a asp. */
-define('BLOCK_WORKFLOW_ENABLED',            0);
+define('BLOCK_ASP_ENABLED',            0);
 
 /** @var int The obsolste state for a asp. */
-define('BLOCK_WORKFLOW_OBSOLETE',           1);
+define('BLOCK_ASP_OBSOLETE',           1);
 
 /** @var int The maximum comment length to be disapled in block. */
-define('BLOCK_WORKFLOW_MAX_COMMENT_LENGTH', 200);
+define('BLOCK_ASP_MAX_COMMENT_LENGTH', 200);
 
 /**
  * Return an list of all of the asps ordered by obsolete status, then appliesto, and finally
@@ -270,7 +270,7 @@ function block_asp_get_active_steps_with_fields_not_null($stepoptions) {
                     AND (ctx.contextlevel = :coursecotext OR ctx.contextlevel = :modulecontext)
                     ORDER BY state.id ASC";
 
-    $options = array('state' => BLOCK_WORKFLOW_STATE_ACTIVE,
+    $options = array('state' => BLOCK_ASP_STATE_ACTIVE,
             'coursecotext' => CONTEXT_COURSE,
             'modulecontext' => CONTEXT_MODULE);
 

@@ -538,7 +538,7 @@ class block_asp_step {
     public static function is_step_in_use($stepid) {
         global $DB;
         return $DB->count_records('block_asp_step_states',
-                array('stepid' => $stepid, 'state' => BLOCK_WORKFLOW_STATE_ACTIVE));
+                array('stepid' => $stepid, 'state' => BLOCK_ASP_STATE_ACTIVE));
     }
 
     /**
@@ -605,7 +605,7 @@ class block_asp_step {
                 LEFT JOIN {block_asp_steps} steps ON steps.id = state.stepid
                 WHERE state.contextid = ? AND state.state = ?';
 
-        $step = $DB->get_record_sql($sql, array($contextid, BLOCK_WORKFLOW_STATE_ACTIVE));
+        $step = $DB->get_record_sql($sql, array($contextid, BLOCK_ASP_STATE_ACTIVE));
         if (!$step) {
             throw new block_asp_not_assigned_exception(get_string('noactiveasp', 'block_asp'));
         }

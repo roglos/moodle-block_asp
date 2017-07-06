@@ -429,7 +429,7 @@ class block_asp_asp {
         $state = new stdClass();
         $state->stepid              = $step->id;
         $state->timemodified        = time();
-        $state->state               = BLOCK_WORKFLOW_STATE_ACTIVE;
+        $state->state               = BLOCK_ASP_STATE_ACTIVE;
 
         // Check whether this asp has been previously assigned to this context.
         $existingstate = $DB->get_record('block_asp_step_states',
@@ -450,7 +450,7 @@ class block_asp_asp {
         // Make a note of the change.
         $statechange = new stdClass;
         $statechange->stepstateid   = $state->id;
-        $statechange->newstate      = BLOCK_WORKFLOW_STATE_ACTIVE;
+        $statechange->newstate      = BLOCK_ASP_STATE_ACTIVE;
         $statechange->userid        = $USER->id;
         $statechange->timestamp     = $state->timemodified; // Use the timestamp from $state to ensure the data matches.
         $DB->insert_record('block_asp_state_changes', $statechange);
@@ -562,10 +562,10 @@ class block_asp_asp {
         $update->id = $this->id;
 
         // Switch the obsolete state of the asp.
-        if ($this->obsolete == BLOCK_WORKFLOW_ENABLED) {
-            $update->obsolete = BLOCK_WORKFLOW_OBSOLETE;
+        if ($this->obsolete == BLOCK_ASP_ENABLED) {
+            $update->obsolete = BLOCK_ASP_OBSOLETE;
         } else {
-            $update->obsolete = BLOCK_WORKFLOW_ENABLED;
+            $update->obsolete = BLOCK_ASP_ENABLED;
         }
 
         // Update the record.

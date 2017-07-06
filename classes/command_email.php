@@ -277,7 +277,7 @@ class block_asp_command_email extends block_asp_command {
         $string = str_replace('%%tasks%%', $tasks, $string);
 
         // Replace %%comment%%.
-        if ($state->state != BLOCK_WORKFLOW_STATE_ACTIVE) {
+        if ($state->state != BLOCK_ASP_STATE_ACTIVE) {
             $comment = $state->comment;
             $format = $state->commentformat;
         } else if (!empty($state->previouscomment)) {
