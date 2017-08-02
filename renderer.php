@@ -54,7 +54,9 @@ class block_asp_renderer extends plugin_renderer_base {
             $sql = 'SELECT * FROM ' . $sourcetable . ' WHERE mav_idnumber LIKE "%' . $course->idnumber . '%"';
             $assessments = $DB->get_records_sql($sql);
         }
-
+        if (count($assessments) == 0 ) {
+            $output .= 'There are no assessments currently recorded in SITS for this module instance.';
+        }
         $output .= '<div class="assesslist">';
         foreach ($assessments as $a) {
             $output .= '<div class="assess">';
