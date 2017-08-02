@@ -59,8 +59,9 @@ class block_asp_renderer extends plugin_renderer_base {
         foreach ($assessments as $a) {
             $output .= '<div class="assess">';
             $output .= '<h5>'.$a->assessment_name.'</h5>';
-            $output .= '<p>Number: '.$a->assessment_number.'         : Weighting:'.$a->assessment_weight.'%<br>';
-            $output .= 'Type: '.$a->assessment_type.'</p>';
+            $output .= '<p>Number: '.$a->assessment_number.'         : Weighting:'.$a->assessment_weight.'%<br />';
+            $output .= 'Type: '.$a->assessment_type.'<br />';
+            $output .= 'Mark Scheme: '.$a->assessment_markscheme_code.': '.$a->assessment_markscheme_name.'</p>';
             $output .= '<h6>Assessment Link Code: '.$a->assessment_idcode.'</h6>';
             $output .= '</div>';
         }
