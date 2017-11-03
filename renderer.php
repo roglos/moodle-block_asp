@@ -21,6 +21,7 @@
  * @copyright 2011 Lancaster University Network Services Limited
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,12 +48,58 @@ class block_asp_renderer extends plugin_renderer_base {
         $canmakechanges = block_asp_can_make_changes($state);
 
         $output = '';
+        $externaldbtype = 'mysqli';
+        $externaldbhost = 'localhost';
+        $externaldbname = 'integrations';
+        $externaldbencoding = 'utf-8';
+        $externaldbsetupsql = '';
+        $externaldbsybasequoting = '';
+        $externaldbdebugdb = '';
+        $externaldbuser = 'moodle01';
+        $externaldbpassword = 'xxxxx';
         $sourcetable = 'usr_data_assessments';
+
+        // Check connection and label Db/Table in cron output for debugging if required.
+        if (!$externaldbtype) {
+            echo 'Database not defined.<br>';
+            return 0;
+        } else {
+//            echo 'Database: ' . $externaldbtype . '<br>';
+        }
+        if (!$sourcetable) {
+            echo 'Table not defined.<br>';
+            return 0;
+        } else {
+//            echo 'Table: ' . $sourcetable . '<br>';
+        }
+//        echo 'Starting connection...<br>';
+
+        // Report connection error if occurs.
+        if (!$extdb = $this->db_init($externaldbtype, $externaldbhost, $externaldbuser, $externaldbpassword, $externaldbname)) {
+            echo 'Error while communicating with external database <br>';
+            return 1;
+        }
+
+        // Get external table name.
         $course = $DB->get_record('course', array('id' => $COURSE->id));
         $assessments = array();
         if ($course->idnumber) {
             $sql = 'SELECT * FROM ' . $sourcetable . ' WHERE mav_idnumber LIKE "%' . $course->idnumber . '%"';
-            $assessments = $DB->get_records_sql($sql);
+            if ($rs = $extdb->Execute($sql)) {
+                if (!$rs->EOF) {
+                    while ($assess = $rs->FetchRow()) {
+                        $assess = array_change_key_case($assess, CASE_LOWER);
+                        $assess = $this->db_decode($externaldbencoding, $assess);
+                        $assessments[] = $assess;
+                    }
+                }
+                $rs->Close();
+            } else {
+                // Report error if required.
+                $extdb->Close();
+                echo 'Error reading data from the external course table<br>';
+                return 4;
+            }
         }
         if (count($assessments) == 0 ) {
             $output .= 'There are no assessments currently recorded in SITS for this module instance.';
@@ -60,11 +107,11 @@ class block_asp_renderer extends plugin_renderer_base {
         $output .= '<div class="assesslist">';
         foreach ($assessments as $a) {
             $output .= '<div class="assess">';
-            $output .= '<h5>'.$a->assessment_name.'</h5>';
-            $output .= '<p>Number: '.$a->assessment_number.'         : Weighting:'.$a->assessment_weight.'%<br />';
-            $output .= 'Type: '.$a->assessment_type.'<br />';
-            $output .= 'Mark Scheme: '.$a->assessment_markscheme_code.': '.$a->assessment_markscheme_name.'</p>';
-            $output .= '<h6>Assessment Link Code: '.$a->assessment_idcode.'</h6>';
+            $output .= '<h5>'.$a['assessment_name'].'</h5>';
+            $output .= '<p>Number: '.$a['assessment_number'].'         : Weighting:'.$a['assessment_weight'].'%<br />';
+            $output .= 'Type: '.$a['assessment_type'].'<br />';
+            $output .= 'Mark Scheme: '.$a['assessment_markscheme_code'].': '.$a['assessment_markscheme_name'].'</p>';
+            $output .= '<h6>Assessment Link Code: '.$a['assessment_idcode'].'</h6>';
             $output .= '</div>';
         }
         $output .='</div>';
@@ -1489,4 +1536,163 @@ class block_asp_renderer extends plugin_renderer_base {
         }
         return  html_writer::tag('span', ' ' . $this->get_userinfo_button($options, $numberofusers));
     }
+
+    /* Db functions cloned from enrol/db plugin.
+     * ========================================= */
+
+    /**
+     * Tries to make connection to the external database.
+     *
+     * @return null|ADONewConnection
+     */
+    public function db_init($externaldbtype, $externaldbhost, $externaldbuser, $externaldbpassword, $externaldbname) {
+        global $CFG;
+
+        require_once($CFG->libdir.'/adodb/adodb.inc.php');
+
+        // Connect to the external database (forcing new connection).
+        $extdb = ADONewConnection($externaldbtype);
+        if ($externaldbdebugdb) {
+            $extdb->debug = true;
+            ob_start(); // Start output buffer to allow later use of the page headers.
+        }
+        // The dbtype my contain the new connection URL, so make sure we are not connected yet.
+        if (!$extdb->IsConnected()) {
+            $result = $extdb->Connect($externaldbhost,
+                $externaldbuser,
+                $externaldbpassword,
+                $externaldbname, true);
+            if (!$result) {
+                return null;
+            }
+        }
+
+        $extdb->SetFetchMode(ADODB_FETCH_ASSOC);
+        if ($externaldbsetupsql) {
+            $extdb->Execute($externaldbsetupsql);
+        }
+        return $extdb;
+    }
+
+    public function db_addslashes($externaldbsybasequoting, $text) {
+        // Use custom made function for now - it is better to not rely on adodb or php defaults.
+        if ($externaldbsybasequoting) {
+            $text = str_replace('\\', '\\\\', $text);
+            $text = str_replace(array('\'', '"', "\0"), array('\\\'', '\\"', '\\0'), $text);
+        } else {
+            $text = str_replace("'", "''", $text);
+        }
+        return $text;
+    }
+
+    public function db_encode($externaldbencoding, $text) {
+        $dbenc = $externaldbencoding;
+        if (empty($dbenc) or $dbenc == 'utf-8') {
+            return $text;
+        }
+        if (is_array($text)) {
+            foreach ($text as $k => $value) {
+                $text[$k] = $this->db_encode($externaldbencoding, $value);
+            }
+            return $text;
+        } else {
+            return core_text::convert($text, 'utf-8', $dbenc);
+        }
+    }
+
+    public function db_decode($externaldbencoding, $text) {
+        $dbenc = $externaldbencoding;
+        if (empty($dbenc) or $dbenc == 'utf-8') {
+            return $text;
+        }
+        if (is_array($text)) {
+            foreach ($text as $k => $value) {
+                $text[$k] = $this->db_decode($externaldbencoding, $value);
+            }
+            return $text;
+        } else {
+            return core_text::convert($text, $dbenc, 'utf-8');
+        }
+    }
+
+    public function db_get_sql($table, array $conditions, array $fields, $distinct = false, $sort = "") {
+        $fields = $fields ? implode(',', $fields) : "*";
+        $where = array();
+        if ($conditions) {
+            foreach ($conditions as $key => $value) {
+                $value = $this->db_encode($this->db_addslashes($externaldbsybasequoting, $value));
+
+                $where[] = "$key = '$value'";
+            }
+        }
+        $where = $where ? "WHERE ".implode(" AND ", $where) : "";
+        $sort = $sort ? "ORDER BY $sort" : "";
+        $distinct = $distinct ? "DISTINCT" : "";
+        $sql = "SELECT $distinct $fields
+                  FROM $table
+                 $where
+                  $sort";
+        return $sql;
+    }
+
+    public function db_get_sql_like($table2, array $conditions, array $fields, $distinct = false, $sort = "") {
+        $fields = $fields ? implode(',', $fields) : "*";
+        $where = array();
+        if ($conditions) {
+            foreach ($conditions as $key => $value) {
+                $value = $this->db_encode($this->db_addslashes($externaldbsybasequoting, $value));
+
+                $where[] = "$key LIKE '%$value%'";
+            }
+        }
+        $where = $where ? "WHERE ".implode(" AND ", $where) : "";
+        $sort = $sort ? "ORDER BY $sort" : "";
+        $distinct = $distinct ? "DISTINCT" : "";
+        $sql2 = "SELECT $distinct $fields
+                  FROM $table2
+                 $where
+                  $sort";
+        return $sql2;
+    }
+
+
+    /**
+     * Returns plugin config value
+     * @param  string $name
+     * @param  string $default value if config does not exist yet
+     * @return string value or default
+     */
+    public function get_config($name, $default = null) {
+        $this->load_config();
+        return isset($this->config->$name) ? $this->config->$name : $default;
+    }
+
+    /**
+     * Sets plugin config value
+     * @param  string $name name of config
+     * @param  string $value string config value, null means delete
+     * @return string value
+     */
+    public function set_config($name, $value) {
+        $pluginname = $this->get_name();
+        $this->load_config();
+        if ($value === null) {
+            unset($this->config->$name);
+        } else {
+            $this->config->$name = $value;
+        }
+        set_config($name, $value, "local_$pluginname");
+    }
+
+    /**
+     * Makes sure config is loaded and cached.
+     * @return void
+     */
+    public function load_config() {
+        if (!isset($this->config)) {
+            $name = $this->get_name();
+            $this->config = get_config("local_$name");
+        }
+    }
+
 }

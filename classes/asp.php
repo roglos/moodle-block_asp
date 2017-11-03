@@ -857,3 +857,4 @@ class block_asp_asp {
         return $this->load_asp($data->id);
     }
 }
+
