@@ -115,6 +115,7 @@ class block_asp_renderer extends plugin_renderer_base {
             $output .= '</div>';
         }
         $output .='</div>';
+        $output .='<div class="aspsteps">';
         // Create the title.
         $output .= html_writer::tag('h3', get_string('activetasktitle', 'block_asp'));
 
@@ -233,6 +234,8 @@ class block_asp_renderer extends plugin_renderer_base {
         }
 
         $output .= $this->asp_overview_button($state->contextid, $state->step()->aspid);
+        $output .='</div>';
+
 
         return $output;
     }
