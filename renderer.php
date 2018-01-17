@@ -21,7 +21,7 @@
  * @copyright 2011 Lancaster University Network Services Limited
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-use stdClass;
+// use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -56,7 +56,7 @@ class block_asp_renderer extends plugin_renderer_base {
         $externaldbsybasequoting = '';
         $externaldbdebugdb = '';
         $externaldbuser = 'moodle01';
-        $externaldbpassword = 'xxxxx';
+        $externaldbpassword = 'GKOiguh7687FFih78yGIIISshiOUFSherg';
         $sourcetable = 'usr_data_assessments';
 
         // Check connection and label Db/Table in cron output for debugging if required.
@@ -1548,7 +1548,7 @@ class block_asp_renderer extends plugin_renderer_base {
      *
      * @return null|ADONewConnection
      */
-    public function db_init($externaldbtype, $externaldbhost, $externaldbuser, $externaldbpassword, $externaldbname) {
+    public function db_init($externaldbtype, $externaldbhost, $externaldbuser, $externaldbpassword, $externaldbname, $externaldbdebugdb=false, $externaldbsetupsql='') {
         global $CFG;
 
         require_once($CFG->libdir.'/adodb/adodb.inc.php');
