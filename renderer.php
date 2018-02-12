@@ -49,7 +49,7 @@ class block_asp_renderer extends plugin_renderer_base {
 
         $output = '';
         $externaldbtype = 'mysqli';
-        $externaldbhost = 'localhost';
+        $externaldbhost = '10.215.2.63';
         $externaldbname = 'integrations';
         $externaldbencoding = 'utf-8';
         $externaldbsetupsql = '';
