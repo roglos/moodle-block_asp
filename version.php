@@ -32,3 +32,8 @@ $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = 'v2.0';
 
 $plugin->outestssufficient = true;
+
+$plugin->dependencies = array(
+    'theme_uogateen'  => 2018051400,
+);
+

@@ -48,16 +48,19 @@ class block_asp_renderer extends plugin_renderer_base {
         $canmakechanges = block_asp_can_make_changes($state);
 
         $output = '';
-        $externaldbtype = 'mysqli';
-        $externaldbhost = '10.215.2.63';
-        $externaldbname = 'integrations';
-        $externaldbencoding = 'utf-8';
-        $externaldbsetupsql = '';
-        $externaldbsybasequoting = '';
-        $externaldbdebugdb = '';
-        $externaldbuser = 'moodle01';
-        $externaldbpassword = 'GKOiguh7687FFih78yGIIISshiOUFSherg';
-        $sourcetable = 'usr_data_assessments';
+
+        // Language files pulled from theme so only need to be maintained in one place.
+        // Theme is plugin dependency in version.php.
+        $externaldbtype = get_string('externaldbtype', 'theme_uogateen');
+        $externaldbhost = get_string('externaldbhost', 'theme_uogateen');
+        $externaldbname = get_string('externaldbname', 'theme_uogateen');
+        $externaldbencoding = get_string('externaldbencoding', 'theme_uogateen');
+        $externaldbsetupsql = get_string('externaldbsetupsql', 'theme_uogateen');
+        $externaldbsybasequoting = get_string('externaldbsybasequoting', 'theme_uogateen');
+        $externaldbdebugdb = get_string('externaldbdebugdb', 'theme_uogateen');
+        $externaldbuser = get_string('externaldbuser', 'theme_uogateen');
+        $externaldbpassword = get_string('externaldbpassword', 'theme_uogateen');
+        $sourcetable = get_string('sourcetableassessments', 'theme_uogateen');
 
         // Check connection and label Db/Table in cron output for debugging if required.
         if (!$externaldbtype) {

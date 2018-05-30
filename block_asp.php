@@ -130,7 +130,7 @@ class block_asp extends block_base {
      * @return  array       An array of the applicable formats for the block
      */
     public function applicable_formats() {
-        return array('course' => true, 'mod' => true);
+        return array('all' => true, 'course' => true, 'mod' => true);
     }
 
     /**
